@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team members · MySaaS App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <!-- Header and Navigation -->
+  <div class="wrapper">
+
+    <header class="site-header">
+      <div class="product-name">
+        <a href="#home">MySaaS App</a>
+      </div>
+      <nav class="site-nav">
+        <a href="#dashboard">Dashboard</a>
+        <a href="#team" aria-current="page">Team members</a>
+        <!-- This means the exact page the user is currently looking at right now. -->
+        <a href="#settings">Settings</a>
+      </nav>
+    </header>
+
+    <!-- Main content -->
+    <main id="main" class="site-main">
+
+      <!-- Page title and invite button -->
+      <div class="page-header-container">
+        <div class="page-title-group">
+          <h1>Team members</h1>
+          <p>Manage your team members and their permissions.</p>
+        </div>
+        <button type="button" class="btn btn--primary">Invite member</button>
+      </div>
+
+
+      <!-- Cards Seats used -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Seats used</h2>
+          <span class="badge badge--warning">90%</span>
+        </div>
+        <p class="metric">45 / 50</p>
+        <button type="button" class="btn btn--secondary">Upgrade plan</button>
+      </div>
+
+      <!-- Members Section (Table) -->
+      <section class="members-section">
+        <h2>Members</h2>
+        <div class="table-container">
+          <table class="members-table">
+            <caption><span class="sr-only">Workspace members</span></caption>
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <!-- By adding scope col, that tell Voice readers which is the header of the label -->
+                <th scope="col">Role</th>
+                <th scope="col">Status</th>
+                <th scope="col">Last login</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ana López</td>
+                <td>Admin</td>
+                <td><span class="badge badge--success">Active</span></td>
+                <td>Nov 8, 2026</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Ben Carter</td>
+                <td>Editor</td>
+                <td><span class="badge badge--warning">Invite pending</span></td>
+                <td>Never</td>
+                <td><button type="button" class="btn btn--secondary">
+                    Resend invite <span class="sr-only">to Ben Carter</span>
+                  </button></td>
+              </tr>
+              <tr>
+                <td>Chen Wei</td>
+                <td>Viewer</td>
+                <td><span class="badge badge--success">Active</span></td>
+                <td>Oct 2, 2026</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Dana Ortiz</td>
+                <td>Editor</td>
+                <td><span class="badge badge--neutral">Deactivated</span></td>
+                <td>Jun 15, 2026</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</body>
+
+</html>
