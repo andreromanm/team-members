@@ -1,23 +1,31 @@
 # MySaaS App — Team Members Dashboard
 
-**https://andreromanm.github.io/team-members/**
+**Live:** https://andreromanm.github.io/team-members/
 
 ## Overview
 
-**MySaaS App** is a hands-on front-end project built to deepen my comprehension of HTML, CSS, and web accessibility. The primary goal was to bridge the gap between design and development by connecting my background in UX/UI and Figma directly to clean, production-ready code.
+**MySaaS App** is a front-end project built to deepen my understanding of HTML, CSS, and web accessibility. As a UX/UI designer, my goal was to understand the relationship between design and development: how the concepts I use in Figma translate into code.
 
 ## What I Practiced
 
-* **Semantic HTML & Naming Conventions:** I explored the benefits of using semantic markup and purpose-driven naming conventions across both design and engineering. Naming elements based on their *function* rather than their *appearance* (for example, using `warning` instead of `yellow`) helps create a shared language between UX designers and developers while preventing maintenance errors in the future.
+* **Semantic HTML & Naming Conventions:** I used real `<button>` elements instead of clickable `div`s so every action works with a keyboard and screen readers, structured the page with a single `h1` and `h2` sections, and built the members list as a `<table>` with `scope="col"` headers. In CSS, I named classes by *function* rather than *appearance* (for example, `badge--warning` instead of `yellow-badge`), which creates a shared language between designers and developers.
 
-* **CSS Flexbox:** I practiced aligning and distributing elements within responsive containers using Flexbox, applying mental models similar to Figma's Auto Layout to build clean, adaptable page structures.
+* **Flexbox:** I built the header, page header and card with Flexbox, which is very similar to Figma's Auto Layout. My biggest lesson: `align-items` on a parent changes every child, so to make just one button hug its content, I used `align-self` on that button.
 
-* **Design Tokens:** Building on my familiarity with design tokens in Figma, I translated foundational design decisions—such as colors, typography, and spacing—into CSS custom properties. Structuring these into reusable layers allowed me to scale styles consistently across complex components and layouts.
+* **Design Tokens:** I translated colors, spacing, font sizes and radius into CSS custom properties, such as `--blue-600: #0d6efd` and `--space-1: 0.25rem`. Components never use raw values or primitives directly: a button uses `var(--color-primary)`, not `#0d6efd` or `var(--blue-600)`.
 
-* **Web Accessibility (WCAG):** I implemented accessible configurations directly in HTML and CSS—including skip links, screen-reader-only context (`sr-only`), accessible focus states, and `prefers-reduced-motion` media queries—to ensure the interface can be easily read, navigated, and adapted across different devices and assistive technologies.
+* **Web Accessibility (WCAG):** I added a skip link, visible focus states for every button and link, and a `prefers-reduced-motion` media query. I also used screen-reader-only text (`sr-only`) where the visual context isn't enough: a "Resend invite" button includes hidden text "to Ben Carter," so screen reader users know who it's for. All text meets WCAG AA contrast (4.5:1), checked in Chrome DevTools.
 
-## Key Architectural Decision: Semantic Design Tokens
+## Key Decision: Three Layers of Design Tokens
 
-One major decision I made during this project was enforcing a **semantic token architecture** so my codebase would be easy to read, scale, and maintain by other people.
+I organized the tokens in three layers so the code is easy to read and maintain:
 
-In my mission to write self-documenting code, I separated raw primitive values (like specific hex codes) from semantic tokens that describe their exact purpose (such as `--color-badge-warning-bg` or `--color-text-muted`). Naming styles after their intended role ensures that both designers and developers stay on the exact same page when deciding which configuration to apply to a component.
+1. **Primitives:** raw values, like `--white: #ffffff`.
+2. **Semantic tokens:** the purpose of a value, like `--color-background: var(--white)`.
+3. **Component tokens:** values only one component uses, like `--color-badge-warning-bg: var(--amber-100)`.
+
+Tokens are chosen by meaning, not by value: two tokens can share a color today and change independently later. Changing the brand color only requires editing the primary semantic tokens in one place.
+
+## What's Next
+
+Rendering the members table from JSON data with JavaScript, including search, filter tabs and live counts.
