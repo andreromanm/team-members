@@ -248,12 +248,14 @@ a:focus-visible {
 
 .table-container {
     overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
 }
 
 .members-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: var(--space-4);
+    /* margin-top: var(--space-4); */
     font-size: var(--font-size-md);
 }
 
@@ -261,8 +263,9 @@ a:focus-visible {
 .members-table td {
     padding: var(--space-2) var(--space-4);
     text-align: left;
-    border-bottom: 1px solid var(--color-border);
     white-space: nowrap;
+    /* Use a bottom border for rows instead of a full grid box around every single cell */
+    border-bottom: 1px solid var(--color-border);
 }
 
 .members-table th {
