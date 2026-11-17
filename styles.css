@@ -255,7 +255,6 @@ a:focus-visible {
 .members-table {
     width: 100%;
     border-collapse: collapse;
-    /* margin-top: var(--space-4); */
     font-size: var(--font-size-md);
 }
 
@@ -272,6 +271,10 @@ a:focus-visible {
     font-weight: 600;
     color: var(--color-text-secondary);
     background-color: var(--color-surface-muted);
+}
+
+.members-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 .members-table caption { 
