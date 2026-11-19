@@ -72,7 +72,7 @@ const users = [
     role: "admin",
     status: "expired", // another B2B workspace state
     joinedAt: "2024-11-30",
-    lastLogin: "2026-09-28"
+    lastLogin: null
   }
 ];
 
@@ -103,15 +103,66 @@ const rawPercentage = (workspace.seats.used / workspace.seats.total) * 100;
 const percentage = Math.round(rawPercentage);
 console.log(`${percentage}%`);
 
-// This automatically evaluates to true or false
+// To change the hard-coded text into dynamic inputs
+const seatsBadge = document.querySelector('.metric-value'); // The 90%
+const metricParagraph = document.querySelector('.metric'); // The 45/50
 const isNearCapacity = percentage >= 90;
-
 console.log(isNearCapacity); // True when 90% or more
 
-// To change the hard-coded text into dynamic inputs
-const seatsBadge = document.querySelector('.seats-badge'); // The 90%
-const metricParagraph = document.querySelector('.metric'); // The 45/50
+if (isNearCapacity) {
+  seatsBadge.classList.add('badge--warning');
+} else {
+  seatsBadge.classList.add('badge--success');
+}
 
 // The operations or transformation for each calculation
 seatsBadge.textContent = `${percentage}%`;
 metricParagraph.textContent = `${workspace.seats.used} / ${workspace.seats.total}`;
+
+// A function (reusable recipe) that uses input and return outputs, for Status Label 
+function getStatusLabel(status) {        // status = the input
+  if (status === "active") {
+    return "Active";                     // return = the output
+  } else if (status === "invited") {
+    return "Invite pending";
+  } else if (status === "deactivated") {
+    return "Deactivated";  
+  } else if (status === "expired") {
+    return "Expired";
+  } else {
+    return "Unknown";                    // always handle the case you didn't expect
+  }
+}
+
+console.log(getStatusLabel("invited"));  // "Invite pending"
+
+// A function for Variants and their badges 
+function getStatusVariant(status) {
+  if (status === "active") {
+    return "badge--success";
+  } else if (status === "invited") {
+    return "badge--warning";
+  } else {
+    return "badge--neutral";
+  }
+}
+
+console.log(getStatusVariant("invited"));  
+
+// Scenarios for null or return the date 
+function formatLastLogin(lastLogin) {
+  if (!lastLogin) { // ! before an item means: if there's not... or that item has no value... 
+    return "Never";
+  }
+
+ const date = new Date(lastLogin);
+  return date.toLocaleDateString("en-US", {
+    month: "short", //Short means short version so instead of November (long) use Nov
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC"
+  });
+}
+
+console.log(formatLastLogin(null));  
+
