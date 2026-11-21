@@ -82,32 +82,23 @@ const workspace = {
   seats: { used: 45, total: 50 }
 };
 
-console.log(workspace.seats.used);
-
 // ==========================================
 // 2. LOGIC & ACTIONS 
 // ==========================================
 
-console.log(users.length);                    // Total count of members
-console.log(users[users.length - 1].name);    // Name of the last member
-console.log(users[3].email);                  // Email of the 4th member
-
 // Test logging for a single user (Ben)
 const ben = users[1];
 const formattedRole = ben.role.charAt(0).toUpperCase() + ben.role.slice(1);
-console.log(`${ben.name} · ${formattedRole} · ${ben.status}`);
 
-// Calculate and log seat usage percentage What to do if the operation returns decimal: (43 / 47 * 100 = 91.489...)
+// What to do if the operation returns decimal: (43 / 47 * 100 = 91.489...)
 const rawPercentage = (workspace.seats.used / workspace.seats.total) * 100;
 // Round it to the nearest whole number
 const percentage = Math.round(rawPercentage);
-console.log(`${percentage}%`);
 
 // To change the hard-coded text into dynamic inputs
-const seatsBadge = document.querySelector('.metric-value'); // The 90%
+const seatsBadge = document.querySelector('.seat-usage-badge'); // The 90%
 const metricParagraph = document.querySelector('.metric'); // The 45/50
 const isNearCapacity = percentage >= 90;
-console.log(isNearCapacity); // True when 90% or more
 
 if (isNearCapacity) {
   seatsBadge.classList.add('badge--warning');
@@ -134,8 +125,6 @@ function getStatusLabel(status) {        // status = the input
   }
 }
 
-console.log(getStatusLabel("invited"));  // "Invite pending"
-
 // A function for Variants and their badges 
 function getStatusVariant(status) {
   if (status === "active") {
@@ -146,8 +135,6 @@ function getStatusVariant(status) {
     return "badge--neutral";
   }
 }
-
-console.log(getStatusVariant("invited"));  
 
 // Scenarios for null or return the date 
 function formatLastLogin(lastLogin) {
@@ -164,5 +151,17 @@ function formatLastLogin(lastLogin) {
   });
 }
 
-console.log(formatLastLogin(null));  
 
+// A good rule for console log is to test every: if, else if and else, they should run at least once while you test.
+console.log(getStatusLabel("active"));
+console.log(getStatusLabel("invited"));
+console.log(getStatusLabel("deactivated"));
+console.log(getStatusLabel("expired"));
+console.log(getStatusLabel("banana"));
+console.log(getStatusVariant("active")); 
+console.log(getStatusVariant("invited")); 
+console.log(getStatusVariant("deactivated")); 
+console.log(getStatusVariant("expired")); 
+console.log(getStatusVariant("banana"));  
+console.log(formatLastLogin(null));  
+console.log(formatLastLogin("2026-11-08")); 
