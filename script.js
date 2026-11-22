@@ -79,16 +79,19 @@ const users = [
 const workspace = {
   name: "Acme Inc.",
   plan: "Pro",
-  seats: { used: 45, total: 50 }
+  seats: { used: 0, total: 50 } // The used 0 is calculated from users below
 };
 
 // ==========================================
 // 2. LOGIC & ACTIONS 
 // ==========================================
 
-// Test logging for a single user (Ben)
-const ben = users[1];
-const formattedRole = ben.role.charAt(0).toUpperCase() + ben.role.slice(1);
+// filter: to keep members who occupy a seat (active or invited)
+const membersUsingSeats = users.filter(
+  user => user.status === "invited" || user.status === "active"
+);
+
+workspace.seats.used = membersUsingSeats.length; // seats used = members who are active or invited
 
 // What to do if the operation returns decimal: (43 / 47 * 100 = 91.489...)
 const rawPercentage = (workspace.seats.used / workspace.seats.total) * 100;
@@ -151,6 +154,41 @@ function formatLastLogin(lastLogin) {
   });
 }
 
+// Function for adding dynamic info into the table in HTML instead of hard coded. 
+function renderRow(user) {
+  const formattedRole = capitalize(user.role);
+  const statusLabel = getStatusLabel(user.status);
+  const statusVariant = getStatusVariant(user.status);
+  const formattedLogin = formatLastLogin(user.lastLogin);
+
+  let actionHtml = "";
+  if (user.status === "invited" || user.status === "expired") {
+    actionHtml = `<button type="button" class="btn btn--secondary">Resend invite <span class="sr-only">to ${user.name}</span></button>`;
+  }
+
+  return `
+    <tr>
+      <td>${user.name}</td>
+      <td>${formattedRole}</td>
+      <td><span class="badge ${statusVariant}">${statusLabel}</span></td>
+      <td>${formattedLogin}</td>
+      <td>${actionHtml}</td>
+    </tr>
+  `;
+}
+
+// Function so the data from the renderRow can be shown in the HTML
+const tbody = document.querySelector(".members-table tbody");
+
+if (tbody) {
+  tbody.innerHTML = users.map(renderRow).join("");
+}
+
+// Function to turn to Upper case
+function capitalize(text) {
+  if (!text) return ""; // It can read as: if there's no text, the function returns "" and stops right there. And if it find something continue with the Upper Case.
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
 
 // A good rule for console log is to test every: if, else if and else, they should run at least once while you test.
 console.log(getStatusLabel("active"));
@@ -165,3 +203,9 @@ console.log(getStatusVariant("expired"));
 console.log(getStatusVariant("banana"));  
 console.log(formatLastLogin(null));  
 console.log(formatLastLogin("2026-11-08")); 
+
+
+const invitedMembers = users.filter(user => user.status === "invited");
+const invitedNames = invitedMembers.map(user => user.name);
+
+console.log(invitedNames);
