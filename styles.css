@@ -326,3 +326,82 @@ a:focus-visible {
         scroll-behavior: auto !important;
     }
 }
+
+/* Toolbar layout: search expands, filter group stays compact on the right */
+.table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.search-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.search-field label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.search-field input {
+  width: 100%;
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  padding: var(--space-2) var(--space-4);
+  color: var(--color-text-main);
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.search-field input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Filter button group */
+[role="group"][aria-label="Filter by status"] {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Base / unselected filter button style */
+[role="group"][aria-label="Filter by status"] button {
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  background-color: var(--color-surface-muted);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+[role="group"][aria-label="Filter by status"] button:hover {
+  background-color: var(--color-surface-alt);
+  color: var(--color-text-main);
+}
+
+/* Selected state driven directly by aria-pressed="true" */
+[role="group"][aria-label="Filter by status"] button[aria-pressed="true"] {
+  background-color: var(--color-primary-active);
+  color: var(--color-text-on-primary);
+  border-color: var(--color-primary-active);
+}
+
+[role="group"][aria-label="Filter by status"] button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}

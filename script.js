@@ -180,10 +180,6 @@ function renderRow(user) {
 // Function so the data from the renderRow can be shown in the HTML
 const tbody = document.querySelector(".members-table tbody");
 
-if (tbody) {
-  tbody.innerHTML = users.map(renderRow).join("");
-}
-
 // Function to turn to Upper case
 function capitalize(text) {
   if (!text) return ""; // It can read as: if there's no text, the function returns "" and stops right there. And if it find something continue with the Upper Case.
@@ -209,3 +205,87 @@ const invitedMembers = users.filter(user => user.status === "invited");
 const invitedNames = invitedMembers.map(user => user.name);
 
 console.log(invitedNames);
+
+// Configurate the table to return search and filter button
+let searchQuery = "";      // what's typed in the search box
+let currentFilter = "all"; // which filter button is selected
+
+function handleSearch(event) {
+  searchQuery = event.target.value;
+  renderTable();
+}
+
+function normalizeQuery(text) {
+  if (!text) return "";
+  return text.trim().toLowerCase();
+}
+
+function renderTable() {
+  if (!tbody) return;
+
+  const normalizedQuery = normalizeQuery(searchQuery);
+
+  const filteredUsers = users.filter(user => {
+    const matchesStatus =
+      currentFilter === "all" || user.status === currentFilter;
+
+    const matchesSearch =
+      normalizedQuery === "" ||
+      user.name.toLowerCase().includes(normalizedQuery) ||
+      user.email.toLowerCase().includes(normalizedQuery);
+
+    return matchesStatus && matchesSearch;
+  });
+
+    if (filteredUsers.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5">No matching results found <button type="button" id="reset-filters" class="btn btn--secondary">Show all members</button></td>
+        
+      </tr>
+    `;
+  } else {
+    tbody.innerHTML = filteredUsers.map(renderRow).join("");
+  }
+}
+
+// Call once on initial page load
+renderTable();
+
+// Practice for me
+const filterButtons = document.querySelectorAll("[data-filter]");
+
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        currentFilter = button.dataset.filter;
+    
+    filterButtons.forEach((btn) => {
+      btn.setAttribute("aria-pressed", btn === button ? "true" : "false");
+    });
+
+    renderTable();
+  });
+});
+
+const searchInput = document.querySelector("#member-search");
+
+const resetBtn = tbody.querySelector("#reset-filters"); 
+
+tbody.addEventListener("click", (event) => {
+  const resetButton = event.target.closest("#reset-filters");
+  if (!resetButton) return;
+
+  searchQuery = "";
+  currentFilter = "all";
+
+  if (searchInput) {
+  searchInput.value = "";
+  }
+
+  filterButtons.forEach((btn) => {
+    btn.setAttribute("aria-pressed", btn.dataset.filter === "all" ? "true" : "false");
+  });
+
+  console.log("reset clicked");
+  renderTable();
+});
