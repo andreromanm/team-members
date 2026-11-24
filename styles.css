@@ -376,7 +376,7 @@ a:focus-visible {
 }
 
 /* Base / unselected filter button style */
-.filter-btn button {
+.filter-btn {
   font-family: inherit;
   font-size: var(--font-size-sm);
   font-weight: 500;
@@ -389,7 +389,7 @@ a:focus-visible {
   flex-shrink: 0;
 }
 
-.filter-btn button:hover {
+.filter-btn:hover {
   background-color: var(--color-surface-alt);
   color: var(--color-text-main);
 }
@@ -401,7 +401,7 @@ a:focus-visible {
   border-color: var(--color-primary-active);
 }
 
-.filter-btn button:focus-visible {
+.filter-btn:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
