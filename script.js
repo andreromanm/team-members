@@ -1,5 +1,5 @@
 // ==========================================
-// 1. DATA & STATE (Source of Truth)
+// 1. DATA
 // ==========================================
 const users = [
   {
@@ -83,52 +83,42 @@ const workspace = {
 };
 
 // ==========================================
-// 2. LOGIC & ACTIONS 
+// 2. STATE (Source of Truth)
 // ==========================================
+let searchQuery = "";      // what's typed in the search box
+let currentFilter = "all"; // which status filter button is selected
 
-// filter: to keep members who occupy a seat (active or invited)
-const membersUsingSeats = users.filter(
-  user => user.status === "invited" || user.status === "active"
-);
-
-workspace.seats.used = membersUsingSeats.length; // seats used = members who are active or invited
-
-// What to do if the operation returns decimal: (43 / 47 * 100 = 91.489...)
-const rawPercentage = (workspace.seats.used / workspace.seats.total) * 100;
-// Round it to the nearest whole number
-const percentage = Math.round(rawPercentage);
-
-// To change the hard-coded text into dynamic inputs
-const seatsBadge = document.querySelector('.seat-usage-badge'); // The 90%
-const metricParagraph = document.querySelector('.metric'); // The 45/50
-const isNearCapacity = percentage >= 90;
-
-if (isNearCapacity) {
-  seatsBadge.classList.add('badge--warning');
-} else {
-  seatsBadge.classList.add('badge--success');
+// ==========================================
+// 3. HELPER FUNCTIONS
+// ==========================================
+function capitalize(text) {
+  if (!text) return ""; // if there's no text, return "" and stop
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-// The operations or transformation for each calculation
-seatsBadge.textContent = `${percentage}%`;
-metricParagraph.textContent = `${workspace.seats.used} / ${workspace.seats.total}`;
+function normalizeText(text) {
+  if (!text) return "";
+  return text
+    .normalize("NFD")                // splits accented letters (like "ó") into base letter + mark
+    .replace(/[\u0300-\u036f]/g, "") // removes accent marks
+    .trim()
+    .toLowerCase();
+}
 
-// A function (reusable recipe) that uses input and return outputs, for Status Label 
-function getStatusLabel(status) {        // status = the input
+function getStatusLabel(status) {
   if (status === "active") {
-    return "Active";                     // return = the output
+    return "Active";
   } else if (status === "invited") {
     return "Invite pending";
   } else if (status === "deactivated") {
-    return "Deactivated";  
+    return "Deactivated";
   } else if (status === "expired") {
     return "Expired";
   } else {
-    return "Unknown";                    // always handle the case you didn't expect
+    return "Unknown";
   }
 }
 
-// A function for Variants and their badges 
 function getStatusVariant(status) {
   if (status === "active") {
     return "badge--success";
@@ -139,22 +129,20 @@ function getStatusVariant(status) {
   }
 }
 
-// Scenarios for null or return the date 
 function formatLastLogin(lastLogin) {
-  if (!lastLogin) { // ! before an item means: if there's not... or that item has no value... 
+  if (!lastLogin) {
     return "Never";
   }
 
- const date = new Date(lastLogin);
+  const date = new Date(lastLogin);
   return date.toLocaleDateString("en-US", {
-    month: "short", //Short means short version so instead of November (long) use Nov
+    month: "short",
     day: "numeric",
     year: "numeric",
     timeZone: "UTC"
   });
 }
 
-// Function for adding dynamic info into the table in HTML instead of hard coded. 
 function renderRow(user) {
   const formattedRole = capitalize(user.role);
   const statusLabel = getStatusLabel(user.status);
@@ -176,54 +164,44 @@ function renderRow(user) {
     </tr>
   `;
 }
+function escapeHtml(text) {
+  return String(text ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
 
-// Function so the data from the renderRow can be shown in the HTML
+function getEmptyStateMessage(filter, query) {
+  const trimmedQuery = query.trim();
+  const safeQuery = escapeHtml(trimmedQuery);
+  const hasFilter = filter !== "all";
+  const hasQuery = trimmedQuery !== "";
+
+  if (hasFilter && hasQuery) {
+    return `No ${filter} members match "${safeQuery}".`;
+  }
+
+  if (hasQuery) {
+    return `No members match "${safeQuery}".`;
+  }
+
+  if (hasFilter) {
+    return `No ${filter} members found.`;
+  }
+
+  return "No members found.";
+}
+
+// ==========================================
+// 4. RENDER TABLE
+// ==========================================
 const tbody = document.querySelector(".members-table tbody");
-
-// Function to turn to Upper case
-function capitalize(text) {
-  if (!text) return ""; // It can read as: if there's no text, the function returns "" and stops right there. And if it find something continue with the Upper Case.
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
-// A good rule for console log is to test every: if, else if and else, they should run at least once while you test.
-console.log(getStatusLabel("active"));
-console.log(getStatusLabel("invited"));
-console.log(getStatusLabel("deactivated"));
-console.log(getStatusLabel("expired"));
-console.log(getStatusLabel("banana"));
-console.log(getStatusVariant("active")); 
-console.log(getStatusVariant("invited")); 
-console.log(getStatusVariant("deactivated")); 
-console.log(getStatusVariant("expired")); 
-console.log(getStatusVariant("banana"));  
-console.log(formatLastLogin(null));  
-console.log(formatLastLogin("2026-11-08")); 
-
-
-const invitedMembers = users.filter(user => user.status === "invited");
-const invitedNames = invitedMembers.map(user => user.name);
-
-console.log(invitedNames);
-
-// Configurate the table to return search and filter button
-let searchQuery = "";      // what's typed in the search box
-let currentFilter = "all"; // which filter button is selected
-
-function handleSearch(event) {
-  searchQuery = event.target.value;
-  renderTable();
-}
-
-function normalizeQuery(text) {
-  if (!text) return "";
-  return text.trim().toLowerCase();
-}
 
 function renderTable() {
   if (!tbody) return;
 
-  const normalizedQuery = normalizeQuery(searchQuery);
+  const normalizedQuery = normalizeText(searchQuery);
 
   const filteredUsers = users.filter(user => {
     const matchesStatus =
@@ -231,17 +209,20 @@ function renderTable() {
 
     const matchesSearch =
       normalizedQuery === "" ||
-      user.name.toLowerCase().includes(normalizedQuery) ||
-      user.email.toLowerCase().includes(normalizedQuery);
+      normalizeText(user.name).includes(normalizedQuery) ||
+      normalizeText(user.email).includes(normalizedQuery);
 
     return matchesStatus && matchesSearch;
   });
 
-    if (filteredUsers.length === 0) {
+  if (filteredUsers.length === 0) {
+    const emptyMessage = getEmptyStateMessage(currentFilter, searchQuery);
     tbody.innerHTML = `
       <tr>
-        <td colspan="5">No matching results found <button type="button" id="reset-filters" class="btn btn--secondary">Show all members</button></td>
-        
+        <td colspan="5">
+         ${emptyMessage}
+          <button type="button" id="reset-filters" class="btn btn--secondary">Show all members</button>
+        </td>
       </tr>
     `;
   } else {
@@ -249,16 +230,41 @@ function renderTable() {
   }
 }
 
-// Call once on initial page load
-renderTable();
+// ==========================================
+// 5. SEAT SUMMARY & EVENT LISTENERS
+// ==========================================
+const membersUsingSeats = users.filter(
+  user => user.status === "invited" || user.status === "active"
+);
 
-// Practice for me
+workspace.seats.used = membersUsingSeats.length;
+const percentage = Math.round((workspace.seats.used / workspace.seats.total) * 100);
+
+const seatsBadge = document.querySelector(".seat-usage-badge");
+const metricParagraph = document.querySelector(".metric");
+
+if (seatsBadge && metricParagraph) {
+  seatsBadge.classList.add(percentage >= 90 ? "badge--warning" : "badge--success");
+  seatsBadge.textContent = `${percentage}%`;
+  metricParagraph.textContent = `${workspace.seats.used} / ${workspace.seats.total}`;
+}
+
+const searchInput = document.querySelector("#member-search");
 const filterButtons = document.querySelectorAll("[data-filter]");
 
-    filterButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        currentFilter = button.dataset.filter;
-    
+function handleSearch(event) {
+  searchQuery = event.target.value;
+  renderTable();
+}
+
+if (searchInput) {
+  searchInput.addEventListener("input", handleSearch);
+}
+
+filterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    currentFilter = button.dataset.filter;
+
     filterButtons.forEach((btn) => {
       btn.setAttribute("aria-pressed", btn === button ? "true" : "false");
     });
@@ -267,25 +273,28 @@ const filterButtons = document.querySelectorAll("[data-filter]");
   });
 });
 
-const searchInput = document.querySelector("#member-search");
+if (tbody) {
+  tbody.addEventListener("click", (event) => {
+    const resetButton = event.target.closest("#reset-filters");
+    if (!resetButton) return;
 
-const resetBtn = tbody.querySelector("#reset-filters"); 
+    searchQuery = "";
+    currentFilter = "all";
 
-tbody.addEventListener("click", (event) => {
-  const resetButton = event.target.closest("#reset-filters");
-  if (!resetButton) return;
+    if (searchInput) {
+      searchInput.value = "";
+    }
 
-  searchQuery = "";
-  currentFilter = "all";
+    filterButtons.forEach((btn) => {
+      btn.setAttribute("aria-pressed", btn.dataset.filter === "all" ? "true" : "false");
+    });
 
-  if (searchInput) {
-  searchInput.value = "";
-  }
-
-  filterButtons.forEach((btn) => {
-    btn.setAttribute("aria-pressed", btn.dataset.filter === "all" ? "true" : "false");
+    renderTable();
   });
+}
 
-  console.log("reset clicked");
-  renderTable();
-});
+
+// ==========================================
+// 6. INITIAL RENDER
+// ==========================================
+renderTable();

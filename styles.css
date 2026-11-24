@@ -368,7 +368,7 @@ a:focus-visible {
 }
 
 /* Filter button group */
-[role="group"][aria-label="Filter by status"] {
+.filter-group {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -376,7 +376,7 @@ a:focus-visible {
 }
 
 /* Base / unselected filter button style */
-[role="group"][aria-label="Filter by status"] button {
+.filter-btn button {
   font-family: inherit;
   font-size: var(--font-size-sm);
   font-weight: 500;
@@ -389,19 +389,19 @@ a:focus-visible {
   flex-shrink: 0;
 }
 
-[role="group"][aria-label="Filter by status"] button:hover {
+.filter-btn button:hover {
   background-color: var(--color-surface-alt);
   color: var(--color-text-main);
 }
 
 /* Selected state driven directly by aria-pressed="true" */
-[role="group"][aria-label="Filter by status"] button[aria-pressed="true"] {
+.filter-btn[aria-pressed="true"] {
   background-color: var(--color-primary-active);
   color: var(--color-text-on-primary);
   border-color: var(--color-primary-active);
 }
 
-[role="group"][aria-label="Filter by status"] button:focus-visible {
+.filter-btn button:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
